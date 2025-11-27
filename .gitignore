@@ -1,0 +1,96 @@
+# ----------------------------
+# Node / Express Backend
+# ----------------------------
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory (nyc/Jest)
+coverage/
+
+# Build output
+dist/
+build/
+tmp/
+temp/
+
+# MongoDB data (if running locally)
+data/
+mongodb-data/
+dump/
+
+# ----------------------------
+# React Frontend (Vite or CRA)
+# ----------------------------
+
+# Build output
+/build
+/dist
+
+# Cache
+.cache/
+.vite/
+.vitepress/
+.vscode/
+*.tsbuildinfo
+
+# Environment files for frontend
+*.env
+*.env.*.local
+
+# ----------------------------
+# OS / Editor files
+# ----------------------------
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+
+# ----------------------------
+# Misc
+# ----------------------------
+
+# Local environment
+.envrc
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
