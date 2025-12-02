@@ -14,7 +14,13 @@ const userSchema = new mongoose.Schema({
 
   password: {
     type: String,
-    required: true,
+    required: [true, 'Please provide password'],
+    minlength: 6,
+  },
+  role: {
+    type: String,
+    enum: ['recruiter', 'user'],
+    default: 'user',
   },
 }, { timestamps: true });
 
