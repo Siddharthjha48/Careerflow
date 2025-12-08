@@ -77,13 +77,13 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card p-6">
-      <h3 className="text-lg font-semibold text-slate-900 mb-5 pb-2 border-b border-slate-100">
+    <form onSubmit={handleSubmit} className="card p-6 bg-[#1E293B] border-slate-700">
+      <h3 className="text-lg font-semibold text-slate-50 mb-5 pb-2 border-b border-slate-700">
         {editingJob ? 'Edit Application' : 'New Application'}
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Company</label>
+          <label className="block text-sm font-medium text-slate-400 mb-1">Company</label>
           <input
             type="text"
             name="company"
@@ -94,7 +94,7 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Position</label>
+          <label className="block text-sm font-medium text-slate-400 mb-1">Position</label>
           <input
             type="text"
             name="position"
@@ -105,7 +105,7 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+          <label className="block text-sm font-medium text-slate-400 mb-1">Status</label>
           <select
             name="status"
             value={formData.status}
@@ -119,7 +119,7 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Job Type</label>
+          <label className="block text-sm font-medium text-slate-400 mb-1">Job Type</label>
           <select
             name="jobType"
             value={formData.jobType}
@@ -133,7 +133,7 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
           </select>
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
+          <label className="block text-sm font-medium text-slate-400 mb-1">Location</label>
           <input
             type="text"
             name="jobLocation"

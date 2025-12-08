@@ -5,18 +5,28 @@
 @theme {
   --font-sans: 'Inter', sans-serif;
   --font-heading: 'Poppins', sans-serif;
-  --color-primary: #4F46E5;
+  --color-primary: #6366F1;
+  /* Indigo 500 */
+  --color-primary-hover: #4F46E5;
   /* Indigo 600 */
-  --color-primary-hover: #4338CA;
-  /* Indigo 700 */
-  --color-bg-subtle: #F8FAFC;
+  --color-bg-main: #0F172A;
+  /* Slate 900 */
+  --color-bg-card: #1E293B;
+  /* Slate 800 */
+  --color-text-primary: #F8FAFC;
   /* Slate 50 */
+  --color-text-secondary: #94A3B8;
+  /* Slate 400 */
+  --color-border: #334155;
+  /* Slate 700 */
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
-    @apply bg-slate-50 text-slate-900 antialiased;
+    background-color: var(--color-bg-main);
+    color: var(--color-text-primary);
+    @apply antialiased;
   }
 
   h1,
@@ -26,23 +36,24 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+    color: var(--color-text-primary);
   }
 }
 
 @layer utilities {
   .btn-primary {
-    @apply px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+    @apply px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-hover)] transition-colors shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0F172A];
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg font-medium hover:bg-slate-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+    @apply px-4 py-2 bg-transparent text-slate-300 border border-slate-600 rounded-lg font-medium hover:bg-slate-800 hover:text-white transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0F172A];
   }
 
   .input-field {
-    @apply w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow;
+    @apply w-full px-4 py-2 bg-[#1E293B] border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow;
   }
 
   .card {
-    @apply bg-white rounded-xl border border-slate-200 shadow-sm;
+    @apply bg-[var(--color-bg-card)] rounded-xl border border-[var(--color-border)] shadow-lg shadow-slate-900/20;
   }
 }

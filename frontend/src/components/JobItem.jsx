@@ -24,17 +24,38 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
     }
   };
 
-  const handleApply = () => {
-    alert('Application submitted successfully! (Mock)');
+  const handleApply = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch('http://localhost:3000/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ jobId: job._id }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Application submitted successfully!');
+      } else {
+        alert(data.message || 'Failed to apply');
+      }
+    } catch (error) {
+      console.error('Error applying:', error);
+      alert('An error occurred');
+    }
   };
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case 'pending': return 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20';
-      case 'interview': return 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-700/10';
-      case 'declined': return 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/10';
-      case 'offer': return 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20';
-      default: return 'bg-slate-50 text-slate-600 ring-1 ring-inset ring-slate-500/10';
+      case 'pending': return 'bg-amber-500/10 text-amber-400 ring-1 ring-inset ring-amber-500/20';
+      case 'interview': return 'bg-indigo-500/10 text-indigo-400 ring-1 ring-inset ring-indigo-500/20';
+      case 'declined': return 'bg-red-500/10 text-red-400 ring-1 ring-inset ring-red-500/20';
+      case 'offer': return 'bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20';
+      default: return 'bg-slate-700/30 text-slate-400 ring-1 ring-inset ring-slate-600/20';
     }
   };
 
@@ -44,7 +65,7 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
   };
 
   return (
-    <div className="card flex flex-col h-full hover:shadow-md transition-shadow duration-200 group">
+    <div className="card flex flex-col h-full hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-200 group border-slate-700 bg-[#1E293B]">
       <div className="p-6 flex-grow">
         <div className="flex justify-between items-start mb-4">
           <div className={`text-xs font-medium px-2.5 py-0.5 rounded-full capitalize ${getStatusStyle(job.status)}`}>
@@ -55,7 +76,7 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
               <>
                 <button
                   onClick={() => onEdit(job)}
-                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-1.5 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors opacity-0 group-hover:opacity-100"
                   title="Edit"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -64,7 +85,7 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors opacity-0 group-hover:opacity-100"
                   title="Delete"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -75,7 +96,7 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
             ) : (
               <button
                 onClick={handleApply}
-                className="px-3 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-full transition-colors"
+                className="px-3 py-1 text-xs font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-full transition-colors"
               >
                 Apply
               </button>
@@ -83,19 +104,19 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
           </div>
         </div>
 
-        <h3 className="text-lg font-semibold text-slate-900 leading-tight mb-1">{job.position}</h3>
-        <p className="text-slate-500 font-medium mb-4">{job.company}</p>
+        <h3 className="text-lg font-semibold text-slate-50 leading-tight mb-1">{job.position}</h3>
+        <p className="text-slate-400 font-medium mb-4">{job.company}</p>
 
         <div className="space-y-2 pt-2">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
             </svg>
             {job.jobLocation}
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-400">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-slate-500">
               <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-1.086-1.036" />
             </svg>
             <span className="capitalize">{job.jobType}</span>
@@ -103,8 +124,8 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
         </div>
       </div>
 
-      <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 rounded-b-xl flex justify-between items-center">
-        <p className="text-xs text-slate-400 font-medium">
+      <div className="px-6 py-3 bg-slate-900/30 border-t border-slate-700/50 rounded-b-xl flex justify-between items-center">
+        <p className="text-xs text-slate-500 font-medium">
           Added {formatDate(job.createdAt)}
         </p>
       </div>
