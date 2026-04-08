@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 
 const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
   const [formData, setFormData] = useState({
@@ -39,8 +40,8 @@ const JobForm = ({ onJobAdded, editingJob, onUpdateJob, onCancelEdit }) => {
 
     try {
       const url = editingJob
-        ? `http://localhost:3000/api/jobs/${editingJob._id}`
-        : 'http://localhost:3000/api/jobs';
+        ? `${API_URL}/api/jobs/${editingJob._id}`
+        : `${API_URL}/api/jobs`;
       const method = editingJob ? 'PATCH' : 'POST';
 
       const response = await fetch(url, {

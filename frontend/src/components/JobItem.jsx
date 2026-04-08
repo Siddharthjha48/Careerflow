@@ -1,11 +1,12 @@
 import React from 'react';
+import { API_URL } from '../config.js';
 
 const JobItem = ({ job, onDelete, onEdit, role }) => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this job?')) {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch(`http://localhost:3000/api/jobs/${job._id}`, {
+        const response = await fetch(`${API_URL}/api/jobs/${job._id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -27,7 +28,7 @@ const JobItem = ({ job, onDelete, onEdit, role }) => {
   const handleApply = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:3000/api/applications', {
+      const response = await fetch(`${API_URL}/api/applications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

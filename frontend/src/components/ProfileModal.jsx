@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 
 const ProfileModal = ({ onClose }) => {
   const [profile, setProfile] = useState({
@@ -16,7 +17,7 @@ const ProfileModal = ({ onClose }) => {
     const fetchProfile = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:3000/api/users/profile', {
+        const response = await fetch(`${API_URL}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -53,7 +54,7 @@ const ProfileModal = ({ onClose }) => {
         formData.append('resume', resumeFile);
       }
 
-      const response = await fetch('http://localhost:3000/api/users/profile', {
+      const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -152,7 +153,7 @@ const ProfileModal = ({ onClose }) => {
             {profile.resume && (
               <div className="mt-2 text-sm">
                 <a
-                  href={`http://localhost:3000/${profile.resume}`}
+                  href={`${API_URL}/${profile.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-400 hover:text-indigo-300 underline"

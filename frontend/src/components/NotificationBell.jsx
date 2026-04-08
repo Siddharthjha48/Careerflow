@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config.js';
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
@@ -8,7 +9,7 @@ const NotificationBell = () => {
   const fetchNotifications = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:3000/api/applications/notifications', {
+      const response = await fetch(`${API_URL}/api/applications/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
@@ -31,7 +32,7 @@ const NotificationBell = () => {
   const markAsRead = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await fetch(`http://localhost:3000/api/applications/notifications/${id}/read`, {
+      await fetch(`${API_URL}/api/applications/notifications/${id}/read`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });

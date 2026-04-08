@@ -4,6 +4,7 @@ import JobForm from '../components/JobForm';
 import JobItem from '../components/JobItem';
 import NotificationBell from '../components/NotificationBell';
 import ProfileModal from '../components/ProfileModal';
+import { API_URL } from '../config.js';
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -32,7 +33,7 @@ const Dashboard = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/api/jobs', {
+        const response = await fetch(`${API_URL}/api/jobs`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -59,7 +60,7 @@ const Dashboard = () => {
     const fetchAnalytics = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:3000/api/applications/analytics', {
+        const response = await fetch(`${API_URL}/api/applications/analytics`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -74,7 +75,7 @@ const Dashboard = () => {
     const fetchApplications = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:3000/api/applications', {
+        const response = await fetch(`${API_URL}/api/applications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -249,7 +250,7 @@ const Dashboard = () => {
                         <td className="px-4 py-4 whitespace-nowrap">
                           {app.applicant?.resume ? (
                             <a
-                              href={`http://localhost:3000/${app.applicant.resume}`}
+                              href={`${API_URL}/${app.applicant.resume}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-indigo-400 hover:text-indigo-300 underline text-xs"
@@ -269,7 +270,7 @@ const Dashboard = () => {
                               const newStatus = e.target.value;
                               const token = localStorage.getItem('token');
                               try {
-                                const res = await fetch(`http://localhost:3000/api/applications/${app._id}/status`, {
+                                const res = await fetch(`${API_URL}/api/applications/${app._id}/status`, {
                                   method: 'PATCH',
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -281,7 +282,7 @@ const Dashboard = () => {
                                   // Update local state
                                   setApplications(applications.map(a => a._id === app._id ? { ...a, status: newStatus } : a));
                                   // Refresh stats
-                                  const statsRes = await fetch('http://localhost:3000/api/applications/analytics', {
+                                  const statsRes = await fetch(`${API_URL}/api/applications/analytics`, {
                                     headers: { Authorization: `Bearer ${token}` },
                                   });
                                   if (statsRes.ok) {
