@@ -99,4 +99,7 @@ Thumbs.db
 
 
 
-// check 
+// check
+backend/uploads/
+*.zip
+

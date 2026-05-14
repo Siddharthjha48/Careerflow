@@ -153,7 +153,7 @@ const ProfileModal = ({ onClose }) => {
             {profile.resume && (
               <div className="mt-2 text-sm">
                 <a
-                  href={`${API_URL}/${profile.resume}`}
+                  href={profile.resume.startsWith('http') ? profile.resume : `${API_URL}/${profile.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-400 hover:text-indigo-300 underline"

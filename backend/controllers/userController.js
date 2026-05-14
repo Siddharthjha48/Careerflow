@@ -16,9 +16,8 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PATCH /api/users/profile
-// @access  Private
+import { parseResumeFromUrl } from '../utils/resumeParser.js';
+
 export const updateUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -26,12 +25,26 @@ export const updateUserProfile = async (req, res) => {
     if (user) {
       user.name = req.body.name || user.name;
       user.email = req.body.email || user.email;
-      user.bio = req.body.bio || user.bio;
-      user.skills = req.body.skills || user.skills;
-      user.experience = req.body.experience || user.experience;
+      
+      let parsedData = null;
 
       if (req.file) {
         user.resume = req.file.path;
+        
+        // Use AI to extract skills, experience, and bio from the new resume
+        parsedData = await parseResumeFromUrl(user.resume);
+      }
+
+      // If AI extracted data, overwrite empty fields or append, 
+      // otherwise fallback to manual body input or existing data.
+      if (parsedData) {
+         user.bio = req.body.bio || parsedData.bio || user.bio;
+         user.skills = req.body.skills || parsedData.skills || user.skills;
+         user.experience = req.body.experience || parsedData.experience || user.experience;
+      } else {
+         user.bio = req.body.bio || user.bio;
+         user.skills = req.body.skills || user.skills;
+         user.experience = req.body.experience || user.experience;
       }
 
       const updatedUser = await user.save();

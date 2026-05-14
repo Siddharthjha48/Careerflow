@@ -4,6 +4,7 @@ import JobForm from '../components/JobForm';
 import JobItem from '../components/JobItem';
 import NotificationBell from '../components/NotificationBell';
 import ProfileModal from '../components/ProfileModal';
+import KanbanBoard from '../components/KanbanBoard';
 import { API_URL } from '../config.js';
 
 const Dashboard = () => {
@@ -113,6 +114,32 @@ const Dashboard = () => {
     setShowForm(false);
   };
 
+  const handleStatusChange = async (appId, newStatus) => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_URL}/api/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setApplications(applications.map(a => a._id === appId ? { ...a, status: newStatus } : a));
+        const statsRes = await fetch(`${API_URL}/api/applications/analytics`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          setStats(data.stats);
+        }
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -208,107 +235,42 @@ const Dashboard = () => {
             <h3 className="text-xl font-bold text-white mb-4">
               {role === 'recruiter' ? 'Recent Applications' : 'My Applications'}
             </h3>
-            <div className="bg-[#1E293B] border border-slate-700 rounded-xl overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-400">
-                <thead className="bg-[#0F172A] text-slate-200 uppercase font-medium">
-                  <tr>
-                    <th className="px-4 py-3 whitespace-nowrap">Position</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Company</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Status</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Date</th>
-                    {role === 'recruiter' && <th className="px-4 py-3 whitespace-nowrap">Applicant</th>}
-                    {role === 'recruiter' && <th className="px-4 py-3 whitespace-nowrap">Resume</th>}
-                    {role === 'recruiter' && <th className="px-4 py-3 whitespace-nowrap">Action</th>}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-700">
-                  {applications.map((app) => (
-                    <tr key={app._id} className="hover:bg-slate-800/50 transition-colors">
-                      <td className="px-4 py-4 font-medium text-white whitespace-nowrap">{app.job?.position || 'Unknown'}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">{app.job?.company || 'Unknown'}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize
-                          ${app.status === 'applied' ? 'bg-blue-500/10 text-blue-400' : ''}
-                          ${app.status === 'shortlisted' ? 'bg-amber-500/10 text-amber-400' : ''}
-                          ${app.status === 'interview' ? 'bg-purple-500/10 text-purple-400' : ''}
-                          ${app.status === 'rejected' ? 'bg-red-500/10 text-red-400' : ''}
-                          ${app.status === 'hired' ? 'bg-emerald-500/10 text-emerald-400' : ''}
-                        `}>
-                          {app.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">{new Date(app.createdAt).toLocaleDateString()}</td>
-                      {role === 'recruiter' && (
-                        <td className="px-4 py-4">
-                          <div>
-                            <p className="text-white whitespace-nowrap">{app.applicant?.name}</p>
-                            <p className="text-xs truncate max-w-[150px]" title={app.applicant?.email}>{app.applicant?.email}</p>
-                          </div>
-                        </td>
-                      )}
-                      {role === 'recruiter' && (
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          {app.applicant?.resume ? (
-                            <a
-                              href={`${API_URL}/${app.applicant.resume}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-indigo-400 hover:text-indigo-300 underline text-xs"
-                            >
-                              View Resume
-                            </a>
-                          ) : (
-                            <span className="text-slate-500 text-xs">N/A</span>
-                          )}
-                        </td>
-                      )}
-                      {role === 'recruiter' && (
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <select
-                            value={app.status}
-                            onChange={async (e) => {
-                              const newStatus = e.target.value;
-                              const token = localStorage.getItem('token');
-                              try {
-                                const res = await fetch(`${API_URL}/api/applications/${app._id}/status`, {
-                                  method: 'PATCH',
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                    Authorization: `Bearer ${token}`,
-                                  },
-                                  body: JSON.stringify({ status: newStatus }),
-                                });
-                                if (res.ok) {
-                                  // Update local state
-                                  setApplications(applications.map(a => a._id === app._id ? { ...a, status: newStatus } : a));
-                                  // Refresh stats
-                                  const statsRes = await fetch(`${API_URL}/api/applications/analytics`, {
-                                    headers: { Authorization: `Bearer ${token}` },
-                                  });
-                                  if (statsRes.ok) {
-                                    const data = await statsRes.json();
-                                    setStats(data.stats);
-                                  }
-                                }
-                              } catch (err) {
-                                console.error('Error updating status:', err);
-                              }
-                            }}
-                            className="bg-[#0F172A] border border-slate-600 text-slate-300 text-xs rounded p-1 focus:ring-2 focus:ring-indigo-500"
-                          >
-                            <option value="applied">Applied</option>
-                            <option value="shortlisted">Shortlisted</option>
-                            <option value="interview">Interview</option>
-                            <option value="rejected">Rejected</option>
-                            <option value="hired">Hired</option>
-                          </select>
-                        </td>
-                      )}
+            {role === 'recruiter' ? (
+              <KanbanBoard applications={applications} onStatusChange={handleStatusChange} />
+            ) : (
+              <div className="bg-[#1E293B] border border-slate-700 rounded-xl overflow-x-auto">
+                <table className="w-full text-left text-sm text-slate-400">
+                  <thead className="bg-[#0F172A] text-slate-200 uppercase font-medium">
+                    <tr>
+                      <th className="px-4 py-3 whitespace-nowrap">Position</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Company</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700">
+                    {applications.map((app) => (
+                      <tr key={app._id} className="hover:bg-slate-800/50 transition-colors">
+                        <td className="px-4 py-4 font-medium text-white whitespace-nowrap">{app.job?.position || 'Unknown'}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">{app.job?.company || 'Unknown'}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize
+                            ${app.status === 'applied' ? 'bg-blue-500/10 text-blue-400' : ''}
+                            ${app.status === 'shortlisted' ? 'bg-amber-500/10 text-amber-400' : ''}
+                            ${app.status === 'interview' ? 'bg-purple-500/10 text-purple-400' : ''}
+                            ${app.status === 'rejected' ? 'bg-red-500/10 text-red-400' : ''}
+                            ${app.status === 'hired' ? 'bg-emerald-500/10 text-emerald-400' : ''}
+                          `}>
+                            {app.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">{new Date(app.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

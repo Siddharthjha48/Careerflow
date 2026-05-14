@@ -7,6 +7,14 @@ const router = express.Router();
 
 router.route('/profile')
   .get(protect, getUserProfile)
-  .patch(protect, upload.single('resume'), updateUserProfile);
+  .patch(protect, (req, res, next) => {
+    upload.single('resume')(req, res, (err) => {
+      if (err) {
+        console.error('Multer Upload Error:', err);
+        return res.status(400).json({ message: 'Upload failed', error: err.message || err });
+      }
+      next();
+    });
+  }, updateUserProfile);
 
 export default router;

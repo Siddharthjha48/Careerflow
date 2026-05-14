@@ -1,31 +1,31 @@
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import dotenv from 'dotenv';
 
-// Ensure uploads directory exists
-const uploadDir = 'uploads/resumes';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
+dotenv.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'careerflow_resumes',
+      resource_type: 'raw',
+      public_id: `${file.fieldname}-${Date.now()}`,
+      format: file.originalname.split('.').pop(),
+    };
   },
 });
 
 function checkFileType(file, cb) {
   const filetypes = /pdf|doc|docx/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
-  if (extname && mimetype) {
+  if (mimetype || file.originalname.match(/\.(pdf|doc|docx)$/i)) {
     return cb(null, true);
   } else {
     cb('Error: Resumes only (PDF, DOC, DOCX)!');
