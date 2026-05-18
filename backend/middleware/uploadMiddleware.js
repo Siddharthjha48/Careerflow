@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     return {
       folder: 'careerflow_resumes',
-      resource_type: 'raw',
+      resource_type: 'auto',
       public_id: `${file.fieldname}-${Date.now()}`,
       format: file.originalname.split('.').pop(),
     };

@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { GoogleGenAI } from '@google/genai';
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -64,5 +65,54 @@ export const updateUserProfile = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Generate AI Cover Letter
+// @route   POST /api/users/cover-letter
+// @access  Private
+export const generateCoverLetter = async (req, res) => {
+  try {
+    const { jobTitle, companyName, jobDescription } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: 'Gemini API key is missing' });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+    const prompt = `
+      You are an expert career coach writing a professional and highly tailored cover letter.
+      
+      Candidate's Profile:
+      Name: ${user.name}
+      Bio: ${user.bio || 'Not provided'}
+      Skills: ${user.skills || 'Not provided'}
+      Experience: ${user.experience || 'Not provided'}
+
+      Job Applying For:
+      Job Title: ${jobTitle}
+      Company Name: ${companyName}
+      Job Description: ${jobDescription}
+
+      Please write a persuasive, well-structured cover letter for this candidate applying to this job. 
+      The cover letter should highlight how the candidate's skills and experience match the job description.
+      Do not include placeholder address headers. Start directly with the greeting, like "Dear Hiring Manager," or "Dear ${companyName} Team,", and end with "Sincerely, ${user.name}".
+    `;
+
+    const result = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+    });
+
+    res.json({ coverLetter: result.text.trim() });
+  } catch (error) {
+    console.error('Error generating cover letter:', error);
+    res.status(500).json({ message: 'Failed to generate cover letter', error: error.message });
   }
 };
