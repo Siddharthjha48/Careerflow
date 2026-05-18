@@ -1,4 +1,6 @@
-import pdf from 'pdf-parse';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pdf = require('pdf-parse');
 import { GoogleGenAI } from '@google/genai';
 
 export const parseResumeFromUrl = async (pdfUrl) => {
